@@ -62,13 +62,6 @@ window.onload = function () {
         checkGetVirus() {
 
         }
-        //1. 左右移動的動畫(根據character判斷)
-        // 1.1 不可以重疊
-        //  1.1.1 川普左 拜登右 => border same => keycode judgement
-        // 1.2 最多到window寬
-        // 1.3 移動速度有上限
-        //2. 加入音效 動畫
-        //3. 加入一些技能？
     }
 
 
@@ -179,10 +172,66 @@ window.onload = function () {
     }
 
 
-    function gameStop(trump, biden) {
+    var invincibleTime;
+    function recordPoint() {
+        var localArray = [];
+
+        Object.keys(localStorage).forEach(function (key) {
+            localArray.push([key, localStorage[key]])
+
+        })
+        var index = localArray.length;
+        // console.log(localArray);
+        while (index > 1) {
+            index--;
+            for (let i = 0; i < index; i++) {
+                if (localArray[i][1] > localArray[i + 1][1]) {
+                    let tempValue = localArray[i]
+                    localArray[i] = localArray[i + 1]
+                    localArray[i + 1] = tempValue
+                }
+            }
+        }
+
+        console.log(localArray);
+        $('#leaderBoard ul').html('');
+        for (let i = 0; i < localArray.length; i++) {
+            $('#leaderBoard ul').append('<li>' + (i + 1) + '.        ' + localArray[i][0] + '           ' + localArray[i][1] + '  point' + '</li>')
+        }
+    
+    }
+    function gameStop() {
         clearInterval(gameStart);
         $('#protection1').css('display', 'none');
         $('#protection2').css('display', 'none');
+        //存起來每個人的成績
+        localStorage.setItem(Trump.name, Trump.score);
+        localStorage.setItem(Biden.name, Biden.score);
+        // console.log(localStorage);
+        recordPoint();
+
+
+
+
+        //展現restart
+        $('#gameFinal').show();
+        if (Trump.score > Biden.score) {
+            $('#winner img').attr('src', "./assets/mask_trump.png");
+            $('.score').text(Trump.score);
+        } else {
+            $('#winner img').attr('src', "./assets/mask_biden.png");
+            $('.score').text(Biden.score);
+        }
+        // 清空陣列 為了下次重新開始遊戲
+        clearInterval(masksInt);
+        clearInterval(virusInt);
+        clearInterval(virusInt2);
+        clearInterval(votesInt);
+        clearInterval(votesInt2);
+        clearTimeout(invincibleTime);
+        masks = [];
+        virus_s = [];
+        votes = [];
     }
 
 
@@ -213,13 +262,13 @@ window.onload = function () {
                     if (character.character == 'left') {
                         //protection1 代表左邊圈圈
                         $('#protection1').css('display', 'block');
-                        $('#protection1').css('top', Trump.y + 'px');
-                        $('#protection1').css('left', (Trump.x + 110) + 'px');
+                        $('#protection1').css('top', (Trump.y - 40) + 'px');
+                        $('#protection1').css('left', (Trump.x - 80) + 'px');
                     } else {
                         //protection2 代表右邊圈圈
                         $('#protection2').css('display', 'block');
-                        $('#protection2').css('top', Biden.y + 'px');
-                        $('#protection2').css('left', (Biden.x + 110) + 'px');
+                        $('#protection2').css('top', (Biden.y - 40) + 'px');
+                        $('#protection2').css('left', (Biden.x - 80) + 'px');
                     }
                     // 設置timeout
                     var invincibleTime = setTimeout(function () {
@@ -316,46 +365,50 @@ window.onload = function () {
 
     window.onkeydown = function (e) {
         //控制biden
-        e.preventDefault();
-        if ((e.keyCode == 37 || e.keyCode == 39) && !Biden.freezed) {
-            if (e.keyCode == 37) {
-                Biden.toLeft();
+        console.log(trumpName);
+        if (trumpName && bidenName) {
+            e.preventDefault();
+            if ((e.keyCode == 37 || e.keyCode == 39) && !Biden.freezed) {
+                if (e.keyCode == 37) {
+                    Biden.toLeft();
 
-                $('#protection2').css('top', Biden.y + 'px');
-                $('#protection2').css('left', (Biden.x + 110) + 'px');
-            } else {
-                Biden.toRight();
+                    $('#protection2').css('top', (Biden.y - 40) + 'px');
+                    $('#protection2').css('left', (Biden.x - 80) + 'px');
+                } else {
+                    Biden.toRight();
 
-                $('#protection2').css('top', Biden.y + 'px');
-                $('#protection2').css('left', (Biden.x + 110) + 'px');
+                    $('#protection2').css('top', (Biden.y - 40) + 'px');
+                    $('#protection2').css('left', (Biden.x - 80) + 'px');
+                }
+            }//控制trump 
+            else if ((e.keyCode == 65 || e.keyCode == 68) && !Trump.freezed) {
+                if (e.keyCode == 65) {
+                    Trump.toLeft();
+                    $('#protection1').css('top', (Trump.y - 40) + 'px');
+                    $('#protection1').css('left', (Trump.x - 80) + 'px');
+                } else {
+                    Trump.toRight();
+                    $('#protection1').css('top', (Trump.y - 40) + 'px');
+                    $('#protection1').css('left', (Trump.x - 80) + 'px');
+                }
             }
-        }//控制trump 
-        else if ((e.keyCode == 65 || e.keyCode == 68) && !Trump.freezed) {
-            if (e.keyCode == 65) {
-                Trump.toLeft();
-                $('#protection1').css('top', Trump.y + 'px');
-                $('#protection1').css('left', (Trump.x + 110) + 'px');
-            } else {
-                Trump.toRight();
-                $('#protection1').css('top', Trump.y + 'px');
-                $('#protection1').css('left', (Trump.x + 110) + 'px');
-            }
-        }
-        if (e.keyCode == 38) {
-            shootingBT()
-            $('#shoot2').css('background', 'url("./assets/torpedo.png")')
-            $('#shoot2').css('background-size', '90px 60px');
-        } else if (e.keyCode == 87) {
-            shootingTB()
-            $('#shoot1').css('background', 'url("./assets/torpedo.png")')
-            $('#shoot1').css('background-size', '90px 60px');
+            if (e.keyCode == 38) {
+                shootingBT()
+                $('#shoot2').css('background', 'url("./assets/torpedo.png")')
+                $('#shoot2').css('background-size', '90px 60px');
+            } else if (e.keyCode == 87) {
+                shootingTB()
+                $('#shoot1').css('background', 'url("./assets/torpedo.png")')
+                $('#shoot1').css('background-size', '90px 60px');
 
+            }
+            //check是否超出界外
+            Trump.checkOutOfBoundary();
+            Biden.checkOutOfBoundary();
+            // check是否相撞 
+            checkCollison(Trump, Biden, e.keyCode);
         }
-        //check是否超出界外
-        Trump.checkOutOfBoundary();
-        Biden.checkOutOfBoundary();
-        // check是否相撞 
-        checkCollison(Trump, Biden, e.keyCode);
+
 
     }
 
@@ -388,30 +441,16 @@ window.onload = function () {
     }
     bg.src = 'assets/bg_final.jpg';
 
-    // 實例化兩個人物
-    var Trump = new Player('Jessica', 'left');
-    Trump.paint();
-    var Biden = new Player('Emily', 'right');
-    Biden.paint();
+
 
     //掉落mask數量、時間
-    var masksInt = setInterval(function () {
-        masksCreate(masks, 1);
-    }, 1000)
+    var masksInt
     //掉落virus數量、時間
-    var virusInt = setInterval(function () {
-        virusCreate(virus_s, 2);
-    }, 5000)
-    var virusInt2 = setInterval(function () {
-        virusCreate(virus_s, 1);
-    }, 3000)
+    var virusInt
+    var virusInt2
     //掉落vote數量、時間
-    var votesInt = setInterval(function () {
-        votesCreate(votes, 1);
-    }, 2000)
-    var votesInt2 = setInterval(function () {
-        votesCreate(votes, 2);
-    }, 1000)
+    var votesInt
+    var votesInt2
 
     function gameOn() {
         if (bgReady) {
@@ -424,7 +463,6 @@ window.onload = function () {
         checkHit(votes, Trump, 'votes');
         checkHit(votes, Biden, 'votes');
         Trump.paint();
-        console.log(Trump.x);
         Biden.paint();
         masksMove(masks);
         masksPaint(masks);
@@ -433,9 +471,63 @@ window.onload = function () {
         virusMove(virus_s);
         virusPaint(virus_s);
     }
-    var gameStart = setInterval(gameOn, 10);
-
+    var gameStart;
+    var trumpName;
+    var bidenName;
+    var Trump;
+    var Biden;
     // 控制DOM
+
+    //填寫完名字後正式開始
+    $('#start').on('click', function () {
+        // 填入玩家姓名
+        trumpName = $('#trumpName').val()
+        bidenName = $('#bidenName').val()
+        if (!trumpName || !bidenName) {
+            alert('請輸入玩家姓名');
+            return
+        }
+        $('#loginBoard').css('display', 'none');
+        masksInt = setInterval(function () {
+            masksCreate(masks, 1);
+        }, 1000)
+        //掉落virus數量、時間
+        virusInt = setInterval(function () {
+            virusCreate(virus_s, 2);
+        }, 5000)
+        virusInt2 = setInterval(function () {
+            virusCreate(virus_s, 1);
+        }, 3000)
+        //掉落vote數量、時間
+        votesInt = setInterval(function () {
+            votesCreate(votes, 1);
+        }, 2000)
+        votesInt2 = setInterval(function () {
+            votesCreate(votes, 2);
+        }, 1000)
+        gameStart = setInterval(gameOn, 10);
+
+
+        // 實例化兩個人物
+        Trump = new Player(trumpName, 'left');
+        Trump.paint();
+        Biden = new Player(bidenName, 'right');
+        Biden.paint();
+    })
+
+    $('#gameStart').on('click', function () {
+        $('#loginBoard').show();
+        $('#controlBoard').hide()
+    })
+
+    $('.ranking').on('click', function () {
+        recordPoint();
+        $('#leaderBoard').show();
+    })
+
+    $('#leaderBoard img').on('click', function () {
+        $('#leaderBoard').hide()
+    })
     $('#pause').on("click", function () {
         $(this).toggleClass('play');
         if ($(this).hasClass('play')) {
@@ -511,7 +603,7 @@ window.onload = function () {
                     $('#explode').css('display', 'none');
                 }, 2000);
                 //凍結動作
-                if (Math.abs(Trump.x - destX) < 50) {
+                if (Math.abs(Trump.x - destX) < 200) {
                     freeze(Trump);
                 }
             }
@@ -554,10 +646,8 @@ window.onload = function () {
                 }, 500);
 
                 //凍結動作
-                if (Math.abs(Biden.x - destX) < 50) {
+                if (Math.abs(Biden.x - destX) < 200) {
                     freeze(Biden);
-
-
                 }
             }
         }, 10);

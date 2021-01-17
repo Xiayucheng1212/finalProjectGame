@@ -5,50 +5,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>小遊戲</title>
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
-    <div id="headBar">
-        激情小遊戲
-    </div>
 
-    <canvas id="canvas" width="1300" height="800" style="background-color: antiquewhite; margin: 20px 200px;">
+    <div id="container">
+        <canvas id="canvas" width="1300" height="800" style="background-color: antiquewhite; ">
 
-    </canvas>
-    <div id="board1">
+        </canvas>
+        <div id="board1">
 
-    </div>
-    <p id="score1">
-        0
-    </p>
-    <div id="board2">
+        </div>
+        <p id="score1">
+            0
+        </p>
+        <div id="board2">
 
-    </div>
-    <p id="score2">
-        0
-    </p>
-    <!-- <div id="background" style="width: 1500px; height: 800px;" > -->
-    <div id="versus">
-    </div>
-    <div class="function">
-        <div id="pause" class="pause">
+        </div>
+        <p id="score2">
+            0
+        </p>
+        <!-- <div id="background" style="width: 1500px; height: 800px;" > -->
+        <div id="versus">
+        </div>
+        <div class="function">
+            <div id="pause" class="pause">
+            </div>
+        </div>
+
+        <div id="protection1">
+        </div>
+        <div id="protection2">
+        </div>
+
+        <div id="shoot1">
+
+        </div>
+
+        <div id="shoot2">
+
+        </div>
+
+        <div id="controlBoard">
+            <!-- 放標誌性圖片 -->
+            <img src="./assets/gameStart.png" alt="">
+            <ul>
+                <li id="gameStart" class="button">Start</li>
+                <li id="ranking" class="button ranking">Ranking</li>
+            </ul>
+        </div>
+
+        <div id="loginBoard">
+            <div id="trumpPlayer">
+                <img src="./assets/mask_trump.png" alt="">
+                <input type="text" id="trumpName" placeholder="Write your name." value="">
+            </div>
+            <div id="bidenPlayer">
+                <img src="./assets/mask_biden.png" alt="">
+                <input type="text" id="bidenName" placeholder="Write your name.">
+            </div>
+
+            <div id="start">
+            </div>
+        </div>
+
+        <div id="gameFinal">
+            <div id="winner">
+                <div id="reward"></div>
+
+                <img src="./assets/mask_trump.png" alt="">
+                <div class="score">
+                    10000
+                </div>
+                <p>YOU WIN !</p>
+            </div>
+            <ul>
+                <li id="restart" class="button">Restart</li>
+                <li id="rankingButton" class="button ranking">Ranking</li>
+            </ul>
+        </div>
+        <div id="leaderBoard">
+            <img src="./assets/remove.png" alt="">
+            <h1>Ranking</h1>
+            <ul>                
+            </ul>
+
         </div>
     </div>
 
-    <div id="protection1">
-    </div>
-    <div id="protection2">
-    </div>
-
-    <div id="shoot1" >
-        
-    </div>
-
-    <div id="shoot2">
-
-    </div>
     <div id="testBlock"
         style=" width: 80px ;height: 50px; position: absolute; bottom: 0px; left: 0px; margin-left: 200px;">
 
@@ -60,6 +106,13 @@
     <div id="explode">
 
     </div>
+
+
+
+
+
+
+
     <audio id="hit">
         <source src="assets/slash.wav">
     </audio>
@@ -68,7 +121,7 @@
 <script src="main.js"></script>
 <script>
     $('#testBlock').css('top', 100 + 'px')
-    
+
 </script>
 
 </html>

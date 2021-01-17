@@ -11,24 +11,64 @@
 
 <body>
     <div id="headBar">
+        激情小遊戲
+    </div>
+
+    <canvas id="canvas" width="1300" height="800" style="background-color: antiquewhite; margin: 20px 200px;">
+
+    </canvas>
+    <div id="board1">
+
+    </div>
+    <p id="score1">
+        0
+    </p>
+    <div id="board2">
+
+    </div>
+    <p id="score2">
+        0
+    </p>
+    <!-- <div id="background" style="width: 1500px; height: 800px;" > -->
+    <div id="versus">
+    </div>
+    <div class="function">
+        <div id="pause" class="pause">
+        </div>
+    </div>
+
+    <div id="protection1">
+    </div>
+    <div id="protection2">
+    </div>
+
+    <div id="shoot1" >
         
     </div>
 
-    <canvas id="canvas" width="1500" height="800" style="background-color: antiquewhite;">
-
-    </canvas>
-    <!-- <div id="background" style="width: 1500px; height: 800px;" > -->
+    <div id="shoot2">
 
     </div>
-    <!-- <img src="assets/trump.png" alt="" id="trump"> -->
+    <div id="testBlock"
+        style=" width: 80px ;height: 50px; position: absolute; bottom: 0px; left: 0px; margin-left: 200px;">
+
+    </div>
+    <div id="testBlock1"
+        style=" width: 80px ;height: 50px; position: absolute; bottom: 0px; left: 0px; margin-left: 200px;">
+
+    </div>
+    <div id="explode">
+
+    </div>
+    <audio id="hit">
+        <source src="assets/slash.wav">
+    </audio>
 </body>
 <script src="jquery.min.js"></script>
 <script src="main.js"></script>
 <script>
-    $("#background").css('backgroundColor', "black");
-
-
-
+    $('#testBlock').css('top', 100 + 'px')
+    
 </script>
 
 </html>

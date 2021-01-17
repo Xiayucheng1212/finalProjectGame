@@ -3,4 +3,153 @@
     padding: 0;
     list-style: none;
 }
+.function{
+    
+    position: absolute;
+    top: 200px;
+    right: 200px;
+}
+
+#pause{
+    width: 70px;
+    height: 70px;
+    margin-top: 10px;
+    
+}
+
+.pause{
+    background: url('./assets/pause_button.png');
+    background-size: 70px 70px;
+}
+
+.play{
+    background: url('./assets/play_button.png');
+    background-size: 70px 70px;
+}
+
+#protection1{
+    display: none;
+    width: 300px;
+    height: 300px;
+    position: absolute;
+    top: 100px;
+    
+    background: url('./assets/protection.png');
+    background-size: 300px 300px;
+}
+
+#protection2{
+    display: none;
+    width: 300px;
+    height: 300px;
+    position: absolute;
+    top: 200px;
+  
+    background: url('./assets/protection.png');
+    background-size: 300px 300px;
+}
+
+
+#versus{
+    position: absolute;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 120px;
+    background: url('./assets/videogame.png');
+    background-size: 120px 120px;
+}
+
+#board1{
+    position: absolute;
+    top: 68px;
+    left: 225px;
+    width: 100px;
+    height: 100px;
+    background: url('./assets/tag.png');
+    background-size: 100px 100px;
+}
+
+#board2{
+    position: absolute;
+    top: 68px;
+    right: 210px;
+    width: 100px;
+    height: 100px;
+    background: url('./assets/tag.png');
+    background-size: 100px 100px;
+    
+}
+
+
+#score1{
+    position: absolute;
+    top: 68px;
+    left: 310px;
+    background-color: #fff;
+    width: 200px;
+    height: 90px;
+    font-size: 40px;
+    text-align: center;
+    line-height: 90px;
+}
+
+#score2{
+    position: absolute;
+    top: 68px;
+    right: 310px;
+    background-color: #fff;
+    width: 200px;
+    height: 90px;
+    font-size: 40px;
+    text-align: center;
+    line-height: 80px;
+}
+
+#shoot1{
+    position: absolute;
+    top: 97px;
+    left: 525px;
+    background: url('./assets/torpedo_color.png'); 
+    background-size: 90px 60px;
+    width: 90px;
+    height: 60px;
+}
+
+
+#shoot2{
+    position: absolute;
+    top: 97px;
+    right: 525px;
+    background: url('./assets/torpedo_color.png'); 
+    background-size: 90px 60px;
+    width: 90px;
+    height: 60px;
+}
+
+#testBlock{
+    display: none;
+    background: url('./assets/torpedo_color.png') ;
+    background-size: 80px 50px;
+
+}
+
+#testBlock1{
+    display: none;
+    background: url('./assets/torpedo_color.png') ;
+    background-size: 80px 50px;
+
+}
+#explode{
+    display: none;
+    position: absolute;
+    top:650px;
+    background: url('./assets/explode.gif');
+    background-size: 200px 200px;
+    width: 200px;
+    height: 200px;
+}
+
+
 

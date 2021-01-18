@@ -115,7 +115,7 @@ window.onload = function () {
         //可以設定遊戲難度
         constructor() {
             super();
-            this.image = new Image(132, 124);
+            this.image = new Image(70, 70);
             this.image.src = 'assets/virus.png';
             var that = this;
             this.image.onload = function () {
@@ -136,7 +136,7 @@ window.onload = function () {
     class Vote extends Drop {
         constructor() {
             super();
-            this.image = new Image(132, 124);
+            this.image = new Image(100, 100);
             this.image.src = 'assets/vote.png';
             var that = this;
             this.image.onload = function () {
@@ -153,7 +153,7 @@ window.onload = function () {
     class Mask extends Drop {
         constructor() {
             super();
-            this.image = new Image(132, 124);
+            this.image = new Image(200, 180);
             this.image.src = 'assets/mask.png';
             var that = this;
             this.image.onload = function () {
@@ -172,36 +172,35 @@ window.onload = function () {
     }
 
 
-    var invincibleTime;
+    var invincibleTimeLeft;
+    var invincibelTimeRight;
     function recordPoint() {
         var localArray = [];
-
         Object.keys(localStorage).forEach(function (key) {
             localArray.push([key, localStorage[key]])
-
         })
         var index = localArray.length;
         // console.log(localArray);
         while (index > 1) {
             index--;
             for (let i = 0; i < index; i++) {
-                if (localArray[i][1] > localArray[i + 1][1]) {
+                if (parseInt(localArray[i][1]) < parseInt(localArray[i + 1][1])) {
                     let tempValue = localArray[i]
                     localArray[i] = localArray[i + 1]
                     localArray[i + 1] = tempValue
                 }
             }
         }
-
         console.log(localArray);
         $('#leaderBoard ul').html('');
         for (let i = 0; i < localArray.length; i++) {
             $('#leaderBoard ul').append('<li>' + (i + 1) + '.        ' + localArray[i][0] + '           ' + localArray[i][1] + '  point' + '</li>')
         }
-    
+
     }
     function gameStop() {
         clearInterval(gameStart);
+
         $('#protection1').css('display', 'none');
         $('#protection2').css('display', 'none');
         //存起來每個人的成績
@@ -209,9 +208,6 @@ window.onload = function () {
         localStorage.setItem(Biden.name, Biden.score);
         // console.log(localStorage);
         recordPoint();
-
-
-
 
         //展現restart
         $('#gameFinal').show();
@@ -222,16 +218,43 @@ window.onload = function () {
             $('#winner img').attr('src', "./assets/mask_biden.png");
             $('.score').text(Biden.score);
         }
+        
+    }
+
+    function restart(){
         // 清空陣列 為了下次重新開始遊戲
+        masks = [];
+        virus_s = [];
+        votes = [];
+        Trump = new Player(trumpName,'left');
+        Biden = new Player(bidenName,'right');
         clearInterval(masksInt);
         clearInterval(virusInt);
         clearInterval(virusInt2);
         clearInterval(votesInt);
         clearInterval(votesInt2);
-        clearTimeout(invincibleTime);
-        masks = [];
-        virus_s = [];
-        votes = [];
+        clearTimeout(invincibleTimeLeft);
+        clearTimeout(invincibelTimeRight);
+        masksInt = setInterval(function () {
+            masksCreate(masks, 1);
+        }, 10000)
+        //掉落virus數量、時間
+        virusInt = setInterval(function () {
+            virusCreate(virus_s, 2);
+        }, 5000)
+        virusInt2 = setInterval(function () {
+            virusCreate(virus_s, 1);
+        }, 3000)
+        //掉落vote數量、時間
+        votesInt = setInterval(function () {
+            votesCreate(votes, 1);
+        }, 2000)
+        votesInt2 = setInterval(function () {
+            votesCreate(votes, 2);
+        }, 1000)
+        gameStart = setInterval(gameOn, 10);
+
+       
     }
 
 
@@ -241,13 +264,17 @@ window.onload = function () {
         for (let i = 0; i < drops.length; i++) {
             if (drops[i].x + drops[i].image.width / 2 >= character.x - character.image.width / 2
                 && drops[i].x - drops[i].image.width / 2 <= character.x + character.image.width / 2
-                && drops[i].y >= character.y - character.image.height / 2) {
+                && drops[i].y >= character.y - character.image.height / 2 && drops[i].y <= canvas.height) {
 
                 if (type == 'virus') {
                     if (!character.invincible) {
+                        console.log('virus', drops[i].x, drops[i].y);
+                        console.log('Trump', Trump.x, Trump.y);
+                        console.log('Biden', Biden.x, Biden.y);
                         //鼠掉
                         gameStop();
-                        console.log('遊戲結束');
+                        console.log('遊戲結束', character.name);
+
                         $('#pause').unbind('click');
                         hit.play();
                     }
@@ -258,29 +285,41 @@ window.onload = function () {
                     // console.log(drops[i].y);
                 } else if (type == 'mask') {
                     //無敵狀態
-                    character.invincible = true;
+
+
                     if (character.character == 'left') {
+                        console.log('碰到mask Left');
                         //protection1 代表左邊圈圈
                         $('#protection1').css('display', 'block');
                         $('#protection1').css('top', (Trump.y - 40) + 'px');
                         $('#protection1').css('left', (Trump.x - 80) + 'px');
-                    } else {
+                    } else if (character.character == 'right') {
                         //protection2 代表右邊圈圈
+                        console.log('碰到mask right');
                         $('#protection2').css('display', 'block');
                         $('#protection2').css('top', (Biden.y - 40) + 'px');
                         $('#protection2').css('left', (Biden.x - 80) + 'px');
                     }
                     // 設置timeout
-                    var invincibleTime = setTimeout(function () {
-                        console.log('無敵時間到');
+                    if (!character.invincible) {
                         if (character.character == 'left') {
-                            $('#protection1').css('display', 'none');
-                        } else if (character.character == 'right') {
-                            $('#protection2').css('display', 'none');
+                            invincibleTimeLeft = setTimeout(function () {
+                                console.log('無敵時間到 left');
+                                console.log('消失mask Left');
+                                $('#protection1').css('display', 'none');
+                                character.invincible = false;
+                            }, 5000);
+                        } else {
+                            invincibelTimeRight = setTimeout(function () {
+                                console.log('無敵時間到 right');
+                                console.log('消失mask right');
+                                $('#protection2').css('display', 'none');
+                                character.invincible = false;
+                            }, 5000)
                         }
-                        character.invincible = false;
+                    }
 
-                    }, 5000);
+                    character.invincible = true;
                 } else {
                     // gameStart = setInterval(gameOn,10);
                     character.score += 10;
@@ -361,11 +400,12 @@ window.onload = function () {
             masks[i].step();
         }
     }
-
+    var shootNumLeft = 1;
+    var shootNumRight = 1;
 
     window.onkeydown = function (e) {
         //控制biden
-        console.log(trumpName);
+        
         if (trumpName && bidenName) {
             e.preventDefault();
             if ((e.keyCode == 37 || e.keyCode == 39) && !Biden.freezed) {
@@ -392,16 +432,21 @@ window.onload = function () {
                     $('#protection1').css('left', (Trump.x - 80) + 'px');
                 }
             }
-            if (e.keyCode == 38) {
+
+            if (e.keyCode == 38 && shootNumLeft > 0) {
                 shootingBT()
+                shootNumLeft--;
                 $('#shoot2').css('background', 'url("./assets/torpedo.png")')
                 $('#shoot2').css('background-size', '90px 60px');
-            } else if (e.keyCode == 87) {
+            } else if (e.keyCode == 87 && shootNumRight > 0) {
                 shootingTB()
+                shootNumRight--;
                 $('#shoot1').css('background', 'url("./assets/torpedo.png")')
                 $('#shoot1').css('background-size', '90px 60px');
 
             }
+
+
             //check是否超出界外
             Trump.checkOutOfBoundary();
             Biden.checkOutOfBoundary();
@@ -477,7 +522,10 @@ window.onload = function () {
     var Trump;
     var Biden;
     // 控制DOM
-
+    $('#restart').on('click',function(){
+        $('#gameFinal').hide();
+        restart();
+    })
     //填寫完名字後正式開始
     $('#start').on('click', function () {
         // 填入玩家姓名
@@ -490,11 +538,11 @@ window.onload = function () {
         $('#loginBoard').css('display', 'none');
         masksInt = setInterval(function () {
             masksCreate(masks, 1);
-        }, 1000)
+        }, 10000)
         //掉落virus數量、時間
         virusInt = setInterval(function () {
             virusCreate(virus_s, 2);
-        }, 5000)
+        }, 4000)
         virusInt2 = setInterval(function () {
             virusCreate(virus_s, 1);
         }, 3000)
@@ -506,7 +554,6 @@ window.onload = function () {
             votesCreate(votes, 2);
         }, 1000)
         gameStart = setInterval(gameOn, 10);
-
 
         // 實例化兩個人物
         Trump = new Player(trumpName, 'left');
@@ -537,7 +584,8 @@ window.onload = function () {
             clearInterval(virusInt2);
             clearInterval(votesInt);
             clearInterval(votesInt2);
-            clearTimeout(invincibleTime);
+            clearTimeout(invincibleTimeLeft);
+            clearTimeout(invincibelTimeRight);
 
 
         } else {
@@ -567,12 +615,11 @@ window.onload = function () {
 
     function parabola(x, destX, startX) {
         var distance = Math.abs(destX - startX);
-        console.log('distance', distance);
+        // console.log('distance', distance);
         var y = (Math.pow((x + (distance / 2)) * 0.05, 2) * (1) + Math.pow((distance / 2) * 0.05, 2));
 
         return y;
     }
-
     // i.e from = Biden.x; to = Trump.x;
     function shootingBT() {
         var startX = Biden.x;
@@ -612,7 +659,7 @@ window.onload = function () {
     function shootingTB() {
         function parabola1(x, destX, startX) {
             var distance = Math.abs(destX - startX);
-            console.log('distance', distance);
+            // console.log('distance', distance);
             var y = (Math.pow((x - (distance / 2)) * 0.05, 2) * (1) + Math.pow((distance / 2) * 0.05, 2));
 
             return y;
@@ -626,7 +673,7 @@ window.onload = function () {
         var boom = setInterval(function () {
             y = parabola1(x, destX, startX) - diff;
             x += 5;
-            console.log((x + Trump.x) + ',' + y);
+            // console.log((x + Trump.x) + ',' + y);
             $('#testBlock1').css('display', 'block');
             $('#testBlock1').css('top', (y) + 'px');
             $('#testBlock1').css('left', (x + Trump.x) + 'px');
